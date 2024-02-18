@@ -19,6 +19,7 @@ class ExtendedTextLibraryUtils {
   ExtendedTextLibraryUtils._();
 
   static const String zeroWidthSpace = '\u{200B}';
+
   // it seems TextPainter works for WidgetSpan on 1.17.0
   // code under 1.17.0
   static Offset getCaretOffset(
@@ -395,16 +396,20 @@ class ExtendedTextLibraryUtils {
       // }
 
       int caretOffset = value.selection.extentOffset;
-      if (difStart > 0) {
+      if (difStart >= 0) {
         oldTextSpan.visitChildren((InlineSpan span) {
           if (span is SpecialInlineSpanBase &&
               (span as SpecialInlineSpanBase).deleteAll) {
             final SpecialInlineSpanBase specialTs =
                 span as SpecialInlineSpanBase;
-            if (difStart > specialTs.start && difStart < specialTs.end) {
+            if (difStart >= specialTs.start && difStart < specialTs.end) {
               //difStart = ts.start;
-              newText = newText.replaceRange(specialTs.start, difStart, '');
-              caretOffset -= difStart - specialTs.start;
+              newText = newText
+                  .replaceRange(specialTs.start, difStart, '')
+                  .replaceRange(difStart, specialTs.end, '');
+              if (difStart != specialTs.start) {
+                caretOffset -= difStart - specialTs.start;
+              }
               return false;
             }
           }
