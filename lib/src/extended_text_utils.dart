@@ -404,9 +404,11 @@ class ExtendedTextLibraryUtils {
                 span as SpecialInlineSpanBase;
             if (difStart >= specialTs.start && difStart < specialTs.end) {
               //difStart = ts.start;
-              newText = newText
-                  .replaceRange(specialTs.start, difStart, '')
-                  .replaceRange(difStart, specialTs.end, '');
+              if (difStart == specialTs.end - 1) {
+                newText = newText.replaceRange(specialTs.start, difStart, '');
+              } else if (difStart == specialTs.start) {
+                newText = newText.replaceRange(difStart, specialTs.end - 1, '');
+              }
               if (difStart != specialTs.start) {
                 caretOffset -= difStart - specialTs.start;
               }
