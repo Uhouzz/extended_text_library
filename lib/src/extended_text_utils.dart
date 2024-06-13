@@ -41,9 +41,7 @@ class ExtendedTextLibraryUtils {
       int offset = textPosition.offset;
       List<TextBox> boxs = textPainter.getBoxesForSelection(
         TextSelection(
-            baseOffset: offset,
-            extentOffset: offset + 1,
-            affinity: textPosition.affinity),
+            baseOffset: offset, extentOffset: offset + 1, affinity: textPosition.affinity),
         boxWidthStyle: boxWidthStyle,
         boxHeightStyle: boxHeightStyle,
       );
@@ -77,8 +75,7 @@ class ExtendedTextLibraryUtils {
     }
 
     final Offset caretOffset =
-        textPainter.getOffsetForCaret(textPosition, caretPrototype) +
-            effectiveOffset;
+        textPainter.getOffsetForCaret(textPosition, caretPrototype) + effectiveOffset;
     return caretOffset;
   }
 
@@ -101,10 +98,8 @@ class ExtendedTextLibraryUtils {
       hitTest: (BoxHitTestResult result, Offset transformed) {
         assert(() {
           final Offset manualPosition = position - offset - effectiveOffset;
-          return (transformed.dx - manualPosition.dx).abs() <
-                  precisionErrorTolerance &&
-              (transformed.dy - manualPosition.dy).abs() <
-                  precisionErrorTolerance;
+          return (transformed.dx - manualPosition.dx).abs() < precisionErrorTolerance &&
+              (transformed.dy - manualPosition.dy).abs() < precisionErrorTolerance;
         }());
         return child.hitTest(result, position: transformed);
       },
@@ -130,8 +125,7 @@ class ExtendedTextLibraryUtils {
       return true;
     });
     if (caretOffset != textPosition.offset) {
-      return TextPosition(
-          offset: max(0, caretOffset), affinity: textPosition.affinity);
+      return TextPosition(offset: max(0, caretOffset), affinity: textPosition.affinity);
     }
 
     return textPosition;
@@ -155,8 +149,7 @@ class ExtendedTextLibraryUtils {
         final TextPosition extent =
             convertTextInputPostionToTextPainterPostion(text, selection.extent);
 
-        final TextPosition base =
-            convertTextInputPostionToTextPainterPostion(text, selection.base);
+        final TextPosition base = convertTextInputPostionToTextPainterPostion(text, selection.base);
 
         if (selection.extent != extent || selection.base != base) {
           selection = selection.copyWith(
@@ -194,8 +187,7 @@ class ExtendedTextLibraryUtils {
             if (end != null) {
               caretOffset = end ? specialTs.end : specialTs.start;
             } else {
-              if (caretOffset >
-                  (specialTs.end - specialTs.start) / 2.0 + specialTs.start) {
+              if (caretOffset > (specialTs.end - specialTs.start) / 2.0 + specialTs.start) {
                 //move caretOffset to end
                 caretOffset = specialTs.end;
               } else {
@@ -214,8 +206,7 @@ class ExtendedTextLibraryUtils {
       });
 
       if (caretOffset != textPosition.offset) {
-        return TextPosition(
-            offset: caretOffset, affinity: textPosition.affinity);
+        return TextPosition(offset: caretOffset, affinity: textPosition.affinity);
       }
     }
     return textPosition;
@@ -237,12 +228,11 @@ class ExtendedTextLibraryUtils {
           return selection;
         }
       } else {
-        final TextPosition? extent =
-            convertTextPainterPostionToTextInputPostion(text, selection.extent,
-                end: selectWord ? true : null);
+        final TextPosition? extent = convertTextPainterPostionToTextInputPostion(
+            text, selection.extent,
+            end: selectWord ? true : null);
 
-        final TextPosition? base = convertTextPainterPostionToTextInputPostion(
-            text, selection.base,
+        final TextPosition? base = convertTextPainterPostionToTextInputPostion(text, selection.base,
             end: selectWord ? false : null);
 
         if (selection.extent != extent || selection.base != base) {
@@ -259,8 +249,7 @@ class ExtendedTextLibraryUtils {
     return selection;
   }
 
-  static TextPosition makeSureCaretNotInSpecialText(
-      InlineSpan text, TextPosition textPosition) {
+  static TextPosition makeSureCaretNotInSpecialText(InlineSpan text, TextPosition textPosition) {
     int caretOffset = textPosition.offset;
     if (caretOffset <= 0) {
       return textPosition;
@@ -272,11 +261,8 @@ class ExtendedTextLibraryUtils {
         final SpecialInlineSpanBase specialTs = ts as SpecialInlineSpanBase;
 
         ///make sure caret is not in text when deleteAll is true
-        if (specialTs.deleteAll &&
-            caretOffset >= specialTs.start &&
-            caretOffset <= specialTs.end) {
-          if (caretOffset >
-              (specialTs.end - specialTs.start) / 2.0 + specialTs.start) {
+        if (specialTs.deleteAll && caretOffset >= specialTs.start && caretOffset <= specialTs.end) {
+          if (caretOffset > (specialTs.end - specialTs.start) / 2.0 + specialTs.start) {
             //move caretOffset to end
             caretOffset = specialTs.end;
           } else {
@@ -340,8 +326,7 @@ class ExtendedTextLibraryUtils {
       // make sure caret is not in text when deleteAll is true
       //
       textSpan.visitChildren((InlineSpan span) {
-        if (span is SpecialInlineSpanBase &&
-            (span as SpecialInlineSpanBase).deleteAll) {
+        if (span is SpecialInlineSpanBase && (span as SpecialInlineSpanBase).deleteAll) {
           final SpecialInlineSpanBase specialTs = span as SpecialInlineSpanBase;
           if (caretOffset >= specialTs.start && caretOffset <= specialTs.end) {
             if (movePrevious != null) {
@@ -351,8 +336,7 @@ class ExtendedTextLibraryUtils {
                 caretOffset = specialTs.end;
               }
             } else {
-              if (caretOffset >
-                  (specialTs.end - specialTs.start) / 2.0 + specialTs.start) {
+              if (caretOffset > (specialTs.end - specialTs.start) / 2.0 + specialTs.start) {
                 //move caretOffset to end
                 caretOffset = specialTs.end;
               } else {
@@ -369,8 +353,7 @@ class ExtendedTextLibraryUtils {
       ///tell textInput caretOffset is changed.
       if (caretOffset != selection.baseOffset) {
         value = value.copyWith(
-            selection: selection.copyWith(
-                baseOffset: caretOffset, extentOffset: caretOffset));
+            selection: selection.copyWith(baseOffset: caretOffset, extentOffset: caretOffset));
         textInputConnection?.setEditingState(value);
       }
     }
@@ -385,25 +368,18 @@ class ExtendedTextLibraryUtils {
     final String? oldText = oldValue?.text;
     String newText = value.text;
 
-    ///take care of image span
     if (oldText != null && oldText.length > newText.length) {
       final int difStart = value.selection.extentOffset;
-      //int difEnd = oldText.length - 1;
-      // for (; difStart < newText.length; difStart++) {
-      //   if (oldText[difStart] != newText[difStart]) {
-      //     break;
-      //   }
-      // }
-
       int caretOffset = value.selection.extentOffset;
       if (difStart >= 0) {
         oldTextSpan.visitChildren((InlineSpan span) {
-          if (span is SpecialInlineSpanBase &&
-              (span as SpecialInlineSpanBase).deleteAll) {
-            final SpecialInlineSpanBase specialTs =
-                span as SpecialInlineSpanBase;
-            if (difStart >= specialTs.start && difStart < specialTs.end) {
-              //difStart = ts.start;
+          if (span is SpecialInlineSpanBase && (span as SpecialInlineSpanBase).deleteAll) {
+            final SpecialInlineSpanBase specialTs = span as SpecialInlineSpanBase;
+            //fix: Delete Key delete Span
+            bool delKeyImage = difStart == specialTs.start &&
+                (newText.startsWith('img src=') || newText.startsWith('file src='));
+            // fix: start first Span replaceRange Error
+            if ((difStart > specialTs.start && difStart < specialTs.end) || delKeyImage) {
               if (difStart == specialTs.end - 1) {
                 newText = newText.replaceRange(specialTs.start, difStart, '');
               } else if (difStart == specialTs.start) {
@@ -698,8 +674,7 @@ class ExtendedTextLibraryUtils {
           if (specialTs.deleteAll &&
               caretOffset >= specialTs.start &&
               caretOffset <= specialTs.end) {
-            if (caretOffset == specialTs.start ||
-                caretOffset == specialTs.end) {
+            if (caretOffset == specialTs.start || caretOffset == specialTs.end) {
               return false;
             } else if (caretOffset == specialTs.start + 1) {
               caretOffset = specialTs.end;
@@ -719,8 +694,7 @@ class ExtendedTextLibraryUtils {
       });
 
       if (caretOffset != textPosition.offset) {
-        return TextPosition(
-            offset: caretOffset, affinity: textPosition.affinity);
+        return TextPosition(offset: caretOffset, affinity: textPosition.affinity);
       }
     }
     return textPosition;
